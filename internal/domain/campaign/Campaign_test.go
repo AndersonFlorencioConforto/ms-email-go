@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestNewCampaign(t *testing.T) {
+func Test_NewCampaign_shouldCampaignIsNonNull(t *testing.T) {
 
 	//arrange
 	var assert = assert.New(t)
@@ -18,7 +18,7 @@ func TestNewCampaign(t *testing.T) {
 	var campaign = newCampaign(aName, aContent, aContacts)
 
 	//assert
-	assert.Equal("1", campaign.ID)
+	assert.NotNilf(campaign.ID, "campaign.ID should not be nil")
 	assert.Equal(aName, campaign.Name)
 	assert.Equal(aContent, campaign.Content)
 	assert.Equal(len(aContacts), len(campaign.Contacts))
@@ -39,5 +39,19 @@ func TestNewCampaign(t *testing.T) {
 	//	t.Errorf("Expected campaign.Contacts to have %d items, got %d", len(aContacts), len(campaign.Contacts))
 	//
 	//}
+
+}
+
+func Test_NewCampaign_IDIsNotNull(t *testing.T) {
+	var assert = assert.New(t)
+	const aName string = "Test Campaign"
+	const aContent string = "Test Content"
+	var aContacts = []string{"anderson@gmail", "babi@gmail"}
+
+	//act
+	var campaign = newCampaign(aName, aContent, aContacts)
+
+	//assert
+	assert.NotNil(campaign.ID)
 
 }
