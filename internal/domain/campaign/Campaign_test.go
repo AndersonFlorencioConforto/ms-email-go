@@ -6,16 +6,22 @@ import (
 	"time"
 )
 
+const (
+	aName    string = "Test Campaign"
+	aContent string = "Test Content"
+)
+
+var (
+	aContacts = []string{"anderson@gmail", "babi@gmail"}
+)
+
 func Test_NewCampaign_shouldCampaignIsNonNull(t *testing.T) {
 
 	//arrange
 	var assert = assert.New(t)
-	const aName string = "Test Campaign"
-	const aContent string = "Test Content"
-	var aContacts = []string{"anderson@gmail", "babi@gmail"}
 
 	//act
-	var campaign = newCampaign(aName, aContent, aContacts)
+	var campaign, _ = newCampaign(aName, aContent, aContacts)
 
 	//assert
 	assert.NotNilf(campaign.ID, "campaign.ID should not be nil")
@@ -44,14 +50,43 @@ func Test_NewCampaign_shouldCampaignIsNonNull(t *testing.T) {
 
 func Test_NewCampaign_IDIsNotNull(t *testing.T) {
 	var assert = assert.New(t)
-	const aName string = "Test Campaign"
-	const aContent string = "Test Content"
-	var aContacts = []string{"anderson@gmail", "babi@gmail"}
 
 	//act
-	var campaign = newCampaign(aName, aContent, aContacts)
+	var campaign, _ = newCampaign(aName, aContent, aContacts)
 
 	//assert
 	assert.NotNil(campaign.ID)
+}
+
+func Test_givenAValidCampaignWithNameNull_whenValidateName_thenThrowError(t *testing.T) {
+	var assert = assert.New(t)
+
+	//act
+	var _, error = newCampaign("", aContent, aContacts)
+
+	//assert
+	assert.Equal("name is required", error.Error())
+
+}
+
+func Test_givenAValidCampaignWithContentNull_whenValidateContent_thenThrowError(t *testing.T) {
+	var assert = assert.New(t)
+
+	//act
+	var _, error = newCampaign(aName, "", aContacts)
+
+	//assert
+	assert.Equal("content is required", error.Error())
+
+}
+
+func Test_givenAValidCampaignWithContactsNull_whenValidateContact_thenThrowError(t *testing.T) {
+	var assert = assert.New(t)
+
+	//act
+	var _, error = newCampaign(aName, aContent, nil)
+
+	//assert
+	assert.Equal("contacts is required", error.Error())
 
 }
