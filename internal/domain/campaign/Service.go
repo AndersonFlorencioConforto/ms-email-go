@@ -1,16 +1,16 @@
 package campaign
 
-import "ms-email/internal/dto"
+import (
+	"ms-email/internal/dto"
+)
 
 type Service struct {
 	Repository Repository
 }
 
-func (s *Service) CreateCampaign(dto dto.NewCampaignDTO) error {
-	campaign, err := newCampaign(dto.Name, dto.Content, dto.Contacts)
-	if err != nil {
-		return err
-	}
-	return s.Repository.Save(campaign)
+func (s *Service) execute(dto dto.NewCampaignDTO) (string, error) {
+	campaign, _ := newCampaign(dto.Name, dto.Content, dto.Contacts)
+	s.Repository.Save(campaign)
+	return campaign.ID, nil
 
 }
