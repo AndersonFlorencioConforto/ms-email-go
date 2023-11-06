@@ -15,7 +15,7 @@ type Campaign struct {
 }
 
 func newCampaign(name string, content string, emails []string) *Campaign {
-	contacts := make([]Contact, len(emails))
+	contacts := make([]Contact, 0)
 
 	for _, email := range emails {
 		contacts = append(contacts, Contact{
@@ -23,6 +23,10 @@ func newCampaign(name string, content string, emails []string) *Campaign {
 		})
 
 	}
+
+	//for index, email := range emails {
+	//	contacts[index] = Contact{Email: email}
+	//}
 
 	return &Campaign{
 		ID:        "1",
