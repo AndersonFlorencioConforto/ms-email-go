@@ -9,8 +9,16 @@ type Service struct {
 }
 
 func (s *Service) execute(dto dto.NewCampaignDTO) (string, error) {
-	campaign, _ := newCampaign(dto.Name, dto.Content, dto.Contacts)
-	s.Repository.Save(campaign)
+	campaign, err := newCampaign(dto.Name, dto.Content, dto.Contacts)
+
+	if err != nil {
+		return "", err
+	}
+	err = s.Repository.Save(campaign)
+
+	if err != nil {
+		return "", err
+	}
 	return campaign.ID, nil
 
 }

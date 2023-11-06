@@ -1,10 +1,23 @@
 package campaign
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"ms-email/internal/dto"
 	"testing"
+)
+
+var (
+	campaignDTO = dto.NewCampaignDTO{
+		Name:     "Test",
+		Content:  "Body",
+		Contacts: []string{"andersonconforto@email"},
+	}
+	mocks   = new(RepositoryMock)
+	service = Service{
+		Repository: mocks,
+	}
 )
 
 type RepositoryMock struct {
@@ -17,33 +30,19 @@ func (r *RepositoryMock) Save(campaign *Campaign) error {
 
 }
 
-func Test_Create_Campaign(t *testing.T) {
+func Test_Create_ValidateDomainError(t *testing.T) {
 	assert := assert.New(t)
 
-	service := Service{}
-
-	campaignDTO := dto.NewCampaignDTO{
-		Name:     "Test",
-		Content:  "Body",
-		Contacts: []string{"andersonconforto@email"},
-	}
-
-	id, err := service.execute(campaignDTO)
-	assert.NotNil(id)
-	assert.Nil(err)
+	campaignDTO.Name = ""
+	_, err := service.execute(campaignDTO)
+	assert.NotNil(err)
+	assert.Equal("name is required", err.Error())
 
 }
 
 func Test_Create_SaveCampaign(t *testing.T) {
 
-	campaignDTO := dto.NewCampaignDTO{
-		Name:     "Test",
-		Content:  "Body",
-		Contacts: []string{"andersonconforto@email"},
-	}
-
-	repositoryMock := new(RepositoryMock)
-	repositoryMock.On("Save", mock.MatchedBy(
+	mocks.On("Save", mock.MatchedBy(
 		func(campaign *Campaign) bool {
 			if campaignDTO.Name != campaign.Name {
 				return false
@@ -55,11 +54,16 @@ func Test_Create_SaveCampaign(t *testing.T) {
 			return true
 		})).Return(nil)
 
-	service := Service{
-		Repository: repositoryMock,
-	}
-
 	service.execute(campaignDTO)
-	repositoryMock.AssertExpectations(t)
+	mocks.AssertExpectations(t)
+
+}
+
+func Test_Create_ValidateDataBase(t *testing.T) {
+	assert := assert.New(t)
+	mocks.On("Save", mock.Anything).Return(errors.New("error"))
+
+	_, err := service.execute(campaignDTO)
+	assert.Equal("error", err.Error())
 
 }
