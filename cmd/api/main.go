@@ -8,7 +8,12 @@ import (
 func main() {
 	router := chi.NewRouter()
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello world"))
+		param := r.URL.Query().Get("name")
+		w.Write([]byte("hello world" + param))
+	})
+	router.Get("/{name}", func(w http.ResponseWriter, r *http.Request) {
+		param := chi.URLParam(r, "name")
+		w.Write([]byte("hello world" + param))
 	})
 	http.ListenAndServe(":3000", router)
 }
