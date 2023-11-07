@@ -32,5 +32,17 @@ func main() {
 		render.JSON(w, r, m)
 
 	})
+	router.Post("/post", func(w http.ResponseWriter, r *http.Request) {
+
+		var product Product
+		render.DecodeJSON(r.Body, &product)
+		render.JSON(w, r, product)
+
+	})
 	http.ListenAndServe(":3000", router)
+}
+
+type Product struct {
+	ID   int
+	Name string
 }
