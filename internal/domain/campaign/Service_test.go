@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"ms-email/internal/dto"
+	"ms-email/internal/internalErrors"
 	"testing"
 )
 
@@ -64,6 +65,6 @@ func Test_Create_ValidateDataBase(t *testing.T) {
 	mocks.On("Save", mock.Anything).Return(errors.New("error"))
 
 	_, err := service.execute(campaignDTO)
-	assert.Equal("error", err.Error())
+	assert.True(errors.Is(err, internalErrors.ErrInternal))
 
 }

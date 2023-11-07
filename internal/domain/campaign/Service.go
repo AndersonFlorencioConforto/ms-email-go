@@ -2,6 +2,7 @@ package campaign
 
 import (
 	"ms-email/internal/dto"
+	"ms-email/internal/internalErrors"
 )
 
 type Service struct {
@@ -17,7 +18,7 @@ func (s *Service) execute(dto dto.NewCampaignDTO) (string, error) {
 	err = s.Repository.Save(campaign)
 
 	if err != nil {
-		return "", err
+		return "", internalErrors.ErrInternal
 	}
 	return campaign.ID, nil
 
