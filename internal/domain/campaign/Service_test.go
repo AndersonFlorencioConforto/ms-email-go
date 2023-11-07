@@ -2,6 +2,7 @@ package campaign
 
 import (
 	"errors"
+	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"ms-email/internal/dto"
@@ -11,14 +12,15 @@ import (
 
 var (
 	campaignDTO = dto.NewCampaignDTO{
-		Name:     "Test",
-		Content:  "Body",
-		Contacts: []string{"andersonconforto@email"},
+		Name:     "Testttt",
+		Content:  "Bodyttt",
+		Contacts: []string{"andersonconforto@email.com"},
 	}
 	mocks   = new(RepositoryMock)
 	service = Service{
 		Repository: mocks,
 	}
+	fake = faker.New()
 )
 
 type RepositoryMock struct {
@@ -34,10 +36,22 @@ func (r *RepositoryMock) Save(campaign *Campaign) error {
 func Test_Create_ValidateDomainError(t *testing.T) {
 	assert := assert.New(t)
 
-	campaignDTO.Name = ""
-	_, err := service.execute(campaignDTO)
+	_, err := service.execute(dto.NewCampaignDTO{})
 	assert.NotNil(err)
-	assert.Equal("name is required", err.Error())
+	assert.Equal("Name min 5", err.Error())
+
+}
+
+func Test_Create_ValidateDomainError2(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := service.execute(dto.NewCampaignDTO{
+		Name:     fake.Lorem().Text(38),
+		Contacts: aContacts,
+		Content:  aContent,
+	})
+	assert.NotNil(err)
+	assert.Equal("Name max 24", err.Error())
 
 }
 

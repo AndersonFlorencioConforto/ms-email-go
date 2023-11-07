@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	aContacts = []string{"anderson@gmail", "babi@gmail"}
+	aContacts = []string{"anderson@gmail.com", "babi@gmail.com"}
 )
 
 func Test_NewCampaign_shouldCampaignIsNonNull(t *testing.T) {
@@ -65,7 +65,7 @@ func Test_givenAValidCampaignWithNameNull_whenValidateName_thenThrowError(t *tes
 	var _, error = newCampaign("", aContent, aContacts)
 
 	//assert
-	assert.Equal("name is required", error.Error())
+	assert.Equal("Name min 5", error.Error())
 
 }
 
@@ -76,7 +76,7 @@ func Test_givenAValidCampaignWithContentNull_whenValidateContent_thenThrowError(
 	var _, error = newCampaign(aName, "", aContacts)
 
 	//assert
-	assert.Equal("content is required", error.Error())
+	assert.Equal("Content min 5", error.Error())
 
 }
 
@@ -87,6 +87,6 @@ func Test_givenAValidCampaignWithContactsNull_whenValidateContact_thenThrowError
 	var _, error = newCampaign(aName, aContent, nil)
 
 	//assert
-	assert.Equal("contacts is required", error.Error())
+	assert.Equal("Contacts min 1", error.Error())
 
 }

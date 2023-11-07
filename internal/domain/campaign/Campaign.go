@@ -2,6 +2,7 @@ package campaign
 
 import (
 	"github.com/rs/xid"
+	"ms-email/internal/internalErrors"
 	"time"
 )
 
@@ -42,12 +43,20 @@ func newCampaign(name string, content string, emails []string) (*Campaign, error
 	//	contacts[index] = Contact{Email: email}
 	//}
 
-	return &Campaign{
+	var campaign = &Campaign{
 		ID:        xid.New().String(),
 		Name:      name,
 		CreatedAt: time.Now(),
 		Content:   content,
 		Contacts:  contacts,
-	}, nil
+	}
+	err := internalErrors.ValidStruct(campaign)
+
+	if err == nil {
+		return campaign, nil
+
+	}
+
+	return nil, err
 
 }
