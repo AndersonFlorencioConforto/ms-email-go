@@ -1,11 +1,14 @@
 package main
 
 import (
+	"errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"ms-email/internal/domain/campaign"
 	"ms-email/internal/dto"
+	"ms-email/internal/infrastructure/database"
+	"ms-email/internal/internalErrors"
 	"net/http"
 )
 
@@ -17,18 +20,26 @@ func main() {
 	router.Use(middleware.Recoverer)
 
 	router.Post("/campaigns", func(writer http.ResponseWriter, request *http.Request) {
-		var service = campaign.Service{}
+		var service = campaign.Service{
+			Repository: &database.CampaignRepository{},
+		}
 
 		var req dto.NewCampaignDTO
 		render.DecodeJSON(request.Body, &req)
 		id, err := service.Execute(req)
 
 		if err != nil {
-			badRequest := http.StatusBadRequest
-			render.Status(request, badRequest)
+			var status int
+			if errors.Is(err, internalErrors.ErrInternal) {
+				status = http.StatusInternalServerError
+				render.Status(request, status)
+			} else {
+				status = http.StatusBadRequest
+				render.Status(request, status)
+			}
 			render.JSON(writer, request, map[string]interface{}{
 				"error": err.Error(),
-				"code":  badRequest,
+				"code":  status,
 			})
 			return
 		}
