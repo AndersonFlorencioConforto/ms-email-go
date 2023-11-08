@@ -1,14 +1,11 @@
 package main
 
 import (
-	"errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 	"ms-email/internal/domain/campaign"
-	"ms-email/internal/dto"
+	"ms-email/internal/endpoints"
 	"ms-email/internal/infrastructure/database"
-	"ms-email/internal/internalErrors"
 	"net/http"
 )
 
@@ -19,37 +16,15 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	router.Post("/campaigns", func(writer http.ResponseWriter, request *http.Request) {
-		var service = campaign.Service{
-			Repository: &database.CampaignRepository{},
-		}
+	var campaignService = campaign.Service{
+		Repository: &database.CampaignRepository{},
+	}
+	handler := endpoints.Handler{
+		CampaignService: campaignService,
+	}
 
-		var req dto.NewCampaignDTO
-		render.DecodeJSON(request.Body, &req)
-		id, err := service.Execute(req)
+	router.Post("/campaigns", endpoints.HandlerError(handler.CampaignPost))
 
-		if err != nil {
-			var status int
-			if errors.Is(err, internalErrors.ErrInternal) {
-				status = http.StatusInternalServerError
-				render.Status(request, status)
-			} else {
-				status = http.StatusBadRequest
-				render.Status(request, status)
-			}
-			render.JSON(writer, request, map[string]interface{}{
-				"error": err.Error(),
-				"code":  status,
-			})
-			return
-		}
-		response := map[string]string{
-			"id": id,
-		}
-		render.Status(request, http.StatusCreated)
-		render.JSON(writer, request, response)
-
-	})
 	//router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 	//	param := r.URL.Query().Get("name")
 	//	w.Write([]byte("hello world" + param))
