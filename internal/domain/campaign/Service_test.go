@@ -36,7 +36,7 @@ func (r *RepositoryMock) Save(campaign *Campaign) error {
 func Test_Create_ValidateDomainError(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := service.execute(dto.NewCampaignDTO{})
+	_, err := service.Execute(dto.NewCampaignDTO{})
 	assert.NotNil(err)
 	assert.Equal("Name min 5", err.Error())
 
@@ -45,7 +45,7 @@ func Test_Create_ValidateDomainError(t *testing.T) {
 func Test_Create_ValidateDomainError2(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := service.execute(dto.NewCampaignDTO{
+	_, err := service.Execute(dto.NewCampaignDTO{
 		Name:     fake.Lorem().Text(38),
 		Contacts: aContacts,
 		Content:  aContent,
@@ -69,7 +69,7 @@ func Test_Create_SaveCampaign(t *testing.T) {
 			return true
 		})).Return(nil)
 
-	service.execute(campaignDTO)
+	service.Execute(campaignDTO)
 	mocks.AssertExpectations(t)
 
 }
@@ -78,7 +78,7 @@ func Test_Create_ValidateDataBase(t *testing.T) {
 	assert := assert.New(t)
 	mocks.On("Save", mock.Anything).Return(errors.New("error"))
 
-	_, err := service.execute(campaignDTO)
+	_, err := service.Execute(campaignDTO)
 	assert.True(errors.Is(err, internalErrors.ErrInternal))
 
 }

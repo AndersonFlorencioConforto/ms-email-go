@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -29,6 +30,8 @@ func Test_NewCampaign_shouldCampaignIsNonNull(t *testing.T) {
 	assert.Equal(aContent, campaign.Content)
 	assert.Equal(len(aContacts), len(campaign.Contacts))
 	assert.Equal(campaign.CreatedAt, time.Now())
+
+	fmt.Println(*campaign)
 
 	//if campaign.ID != "1" {
 	//	t.Errorf("Expected campaign.ID to be 1, got %s", campaign.ID)

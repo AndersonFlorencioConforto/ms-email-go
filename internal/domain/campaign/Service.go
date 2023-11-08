@@ -9,7 +9,7 @@ type Service struct {
 	Repository Repository
 }
 
-func (s *Service) execute(dto dto.NewCampaignDTO) (string, error) {
+func (s *Service) Execute(dto dto.NewCampaignDTO) (string, error) {
 	campaign, err := newCampaign(dto.Name, dto.Content, dto.Contacts)
 
 	if err != nil {
